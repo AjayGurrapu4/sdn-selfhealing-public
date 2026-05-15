@@ -143,7 +143,7 @@ When the risk score crosses the configured threshold, the controller can proacti
 
 ## Example Run Commands
 
-### 1. Start the Reactive Fault Baseline Controller
+### 1. Start the Predictive Controller
 
 ```bash
 cd ~/sdn-selfhealing
