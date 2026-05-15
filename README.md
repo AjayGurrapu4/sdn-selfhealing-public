@@ -16,15 +16,10 @@ The aim is to design and evaluate a self-healing SDN system that uses telemetry-
 - iperf3 for traffic generation and throughput measurement
 - Python and Bash scripts for automation and evaluation
 
-## Topology Images
 
-### Diamond SDN Topology
+## Diamond Topology Image
 
 ![Diamond SDN Topology](docs/images/topology_diamond.png)
-
-### Predictive Self-Healing SDN Workflow
-
-![Predictive Self-Healing SDN Workflow](docs/images/topology_predictive_flow.png)
 
 
 ## Project Structure
