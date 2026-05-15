@@ -41,3 +41,12 @@ sdn-selfhealing/
 ### Predictive Self-Healing SDN Workflow
 
 ![Predictive Self-Healing SDN Workflow](docs/images/topology_predictive_flow.png)
+
+
+
+
+
+
+## Public Repository Notice
+
+This repository contains a cleaned portfolio version of my MSc project implementation. Large experiment outputs, trained model files, raw telemetry datasets, and university submission documents are excluded from the public repository for privacy, storage, and academic integrity reasons.
