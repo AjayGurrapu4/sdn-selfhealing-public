@@ -80,15 +80,9 @@ sdn-selfhealing/
 
 ---
 
-## Topology Images
-
-### Diamond SDN Topology
+## Diamond Topology Image
 
 ![Diamond SDN Topology](docs/images/topology_diamond.png)
-
-### Predictive Self-Healing SDN Workflow
-
-![Predictive Self-Healing SDN Workflow](docs/images/topology_predictive_flow.png)
 
 ---
 
@@ -155,10 +149,15 @@ When the risk score crosses the configured threshold, the controller can proacti
 cd ~/sdn-selfhealing
 source ~/venvs/ryu/bin/activate
 
-ryu-manager --observe-links \
---ofp-tcp-listen-port 6633 \
+MODEL_PATH=~/sdn-selfhealing/models/fault_prediction_model.pkl \
+RISK_THRESHOLD=0.10 \
+RISK_CONSECUTIVE_POLLS=2 \
+HEALING_COOLDOWN_SEC=20 \
+POST_HEAL_CHECK_SEC=8 \
+ryu-manager --observe-links --ofp-tcp-listen-port 6633 \
 ryu.topology.switches \
-ryu_apps/reactive_fault_baseline.py
+ryu_apps/predictive_self_healing_controller.py \
+2>&1 | tee results/phase8_ryu.log
 ```
 
 ---
@@ -174,41 +173,36 @@ sudo python3 topo/diamond_topo.py
 
 ---
 
-### 3. Start Traffic in Mininet
+### 3. Start Traffic in Mininet 
 
 Inside the `mininet>` prompt:
 
 ```bash
+pingall
+
 h2 iperf3 -s -i 1 &
-h1 bash scripts/start_iperf_client.sh 10.0.0.2 45 results/phase3_iperf.txt results/phase3_iperf_start.txt
+h2 iperf3 -s -p 5202 -i 1 &
+
+h1 bash scripts/start_iperf_client.sh 10.0.0.2 45 results/phase8_congestion_iperf.txt results/phase8_congestion_iperf_start.txt &
 ```
 
 ---
 
-### 4. Trigger a Link Failure
+### 4. Inject the Congestion in Mininet 
+
+```bash
+h1 iperf3 -c 10.0.0.2 -p 5202 -P 16 -t 25 -i 1 &
+```
+
+---
+
+### 5. Results
 
 Open a third terminal:
 
 ```bash
 cd ~/sdn-selfhealing
-bash scripts/trigger_link_failure.sh s1 s2 results/phase3_fault_begin.txt
-```
-
-Then inside the `mininet>` prompt:
-
-```bash
-link s1 s2 down
-```
-
----
-
-### 5. Estimate Recovery Time
-
-```bash
-python3 scripts/parse_iperf_recovery.py \
---iperf results/phase3_iperf.txt \
---iperf_start results/phase3_iperf_start.txt \
---fault results/phase3_fault_begin.txt
+grep -Ei "PREDICTION_ALERT|HEALING_ACTION|POST_HEAL_CHECK|risk|heal|reroute|avoid" results/phase8_ryu.log
 ```
 
 ---
